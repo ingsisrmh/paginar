@@ -1,5 +1,8 @@
-#paginacion
+#paginacion, #infpaginacion
 {
 	display: block;
 	height: 30px;
+	border: 1px solid #00FF00;
+	padding: 0px;
+	margin: 0px;
 }
