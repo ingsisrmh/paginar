@@ -9,6 +9,7 @@
 </head>
 
 <body>
+	<div id="infpaginacion"></div>
 	<div id="paginacion"></div>
 </body>
 </html>
