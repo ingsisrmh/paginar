@@ -1,85 +1,90 @@
-var caja;
+var infopaginar;
+var botonespaginar;
 
 addEventListener('load', iniciar);
 
 function iniciar()
 {
-	caja = document.getElementById('paginacion');
-
-	var paginas = {total:100, mostrar:15, actual:1};
-
-	caja.innerHTML += enviar(0, 30);
-	caja.innerHTML += paginar(paginas);
+	paginame(500, 30);
 }
 
-function actualizar(actual)
+function paginame(todas=1, cantidad=1)
 {
-	a = actual;
+	var paginas = {total:todas, mostrar:cantidad, actual:1};
+	infopaginar = document.getElementById('infpaginacion');
+	botonespaginar = document.getElementById('paginacion');
 
-	var paginas = {total:100, mostrar:15, actual:a};
+	infopaginar.innerHTML += rango(paginas.actual, paginas.mostrar);
+	botonespaginar.innerHTML += paginar(paginas);
+}
 
-	limpiar();
+function actualizarpaginacion(total, mostrar, actual)
+{
+	var paginas = {total:1, mostrar:1, actual:1};
+	
+	paginas.total = total;
+	paginas.mostrar = mostrar;
+	paginas.actual = actual;
+	
+	limpiar(infopaginar);
+	limpiar(botonespaginar);
 
-	var t = paginas.total; //Total de páginas
-	var m = paginas.mostrar; //Cuantos registros se van a mostra
-	var a = paginas.actual; //Cual es la página actual
-	var l = m*a;
-	var i = (l-m)+1;
+	var limite = paginas.mostrar*paginas.actual;
+	var inicio = (limite-paginas.mostrar)+1;
 
-	if(l>t)
-		l=t;
+	if(limite>paginas.total)
+		limite=paginas.total;
 
-	caja.innerHTML += enviar(i, l);
-	caja.innerHTML += paginar(paginas);
+	infopaginar.innerHTML += rango(inicio, limite);
+	botonespaginar.innerHTML += paginar(paginas);
 }
 
 function paginar(paginas)
 {
-	total = paginas.total;
-	mostrar = paginas.mostrar;
-	actual = paginas.actual;
+	var total = paginas.total;
+	var mostrar = paginas.mostrar;
+	var actual = paginas.actual;
 
-	var paginas = parseFloat(total)/parseFloat(mostrar);
-	var actual = parseInt(actual);
-	paginas = parseInt(paginas);
+	var totalpaginas = parseFloat(paginas.total)/parseFloat(paginas.mostrar);
+	var actual = parseInt(paginas.actual);
+	totalpaginas = parseInt(totalpaginas);
 
-	if(paginas < parseFloat(total)/parseFloat(mostrar))
-		paginas ++;
+	if(totalpaginas < parseFloat(paginas.total)/parseFloat(paginas.mostrar))
+		totalpaginas ++;
 
 	var resultado = '';
 
-	if(actual > 1)
-		anterior = parseInt(actual) - 1;
+	if(paginas.actual > 1)
+		anterior = parseInt(paginas.actual) - 1;
 
-	resultado += '<paginacion>'
-			  + '';
-	if(actual > 1)
-		resultado += '<input type="button" value="Anterior" onClick = "actualizar(' + anterior + ')">';
+	resultado += '<paginacion>';
+
+	if(paginas.actual > 1)
+		resultado += '<input type="button" value="Anterior" onClick = "actualizarpaginacion(' + total + ',' + mostrar + ',' + anterior + ')">';
 	else
 		resultado += '<input type="button" disabled="true" value="Anterior">';
 
-	for(var a=1; a<=paginas; a++)
+	for(var i=1; i<=totalpaginas; i++)
 	{
-		if(a != actual)
-			resultado += '<input type="button" value="' + a + '" onClick = "actualizar(' + a + ')">';
+		if(i != paginas.actual)
+			resultado += '<input type="button" value="' + i + '" onClick = "actualizarpaginacion(' + total + ',' + mostrar + ',' + i + ')">';
 		else
-			resultado += '<input type="button" disabled="true" value="' + a + '" onClick = "actualizar(' + a + ')">';
+			resultado += '<input type="button" disabled="true" value="' + i + '" onClick = "actualizarpaginacion(' + i + ')">';
 	}
 
-	if(actual < paginas)
-	siguiente = parseInt(actual) + 1;
+	if(paginas.actual < totalpaginas)
+		siguiente = parseInt(paginas.actual) + 1;
 
-	if(actual < paginas)
-		resultado += '<input type="button" value="Siguiente" onClick = "actualizar(' + siguiente + ')">';
+	if(paginas.actual < totalpaginas)
+		resultado += '<input type="button" value="Siguiente" onClick = "actualizarpaginacion(' + total + ',' + mostrar + ',' + siguiente + ')">';
 	else
-		resultado += '<input type="button" disabled="true" value="Siguiente">';
-		resultado += ''
+		resultado += '<input type="button" disabled="true" value="Siguiente">'
 				  + '</paginacion>';
 
 	return(resultado);
 }
 
-function enviar(inicio, limite)
+function rango(inicio, limite)
 {
 	texto = 'Se muestra los registros del "' + inicio + '" al "' + limite + '"';
 
@@ -90,9 +95,9 @@ function enviar(inicio, limite)
 	return(texto);
 }
 
-function limpiar()
+function limpiar(elemento)
 {
-	if(caja.hasChildNodes())
-		while(caja.childNodes.length>=1)
-			caja.removeChild(caja.firstChild);
+	if(elemento.hasChildNodes())
+		while(elemento.childNodes.length>=1)
+			elemento.removeChild(elemento.firstChild);
 }
